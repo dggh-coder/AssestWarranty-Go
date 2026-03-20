@@ -25,8 +25,18 @@ npm run dev
 複製 `.env.example` 為 `.env`：
 
 ```env
-VITE_API_BASE_URL=http://localhost:8080
+VITE_API_BASE_URL=http://192.168.8.130:8080
 ```
+
+如果前端是從其他電腦的瀏覽器開啟，請把 `VITE_API_BASE_URL` 設成後端主機可被該瀏覽器存取的位址，例如：
+
+```env
+VITE_API_BASE_URL=http://192.168.8.130:8080
+```
+
+若未設定，前端現在會自動改用「目前瀏覽器所在主機名稱 + `:8080`」作為預設 API 位址。
+
+另外，backend 現在預設允許跨來源請求（CORS），也可在 `backend/.env` 用 `APP_ALLOWED_ORIGINS` 限制允許的前端來源。
 
 ## 目前功能
 
@@ -52,3 +62,9 @@ APP_AUTH_ROLE=read
 ```
 
 `APP_AUTH_ROLE` 只接受 `read` 或 `write`。
+
+
+## 空資料回應行為
+
+- List 類 API 若回傳 `data: null`，前端會視為空陣列顯示，不再直接報 Network Error。
+- Detail / create / update / renewal 類 API 若回傳空資料，前端會顯示較明確的錯誤訊息。

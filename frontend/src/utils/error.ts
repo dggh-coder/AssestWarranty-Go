@@ -11,6 +11,10 @@ export function getErrorMessage(error: unknown): string {
       return error.response.data;
     }
 
+    if (error.code === 'ERR_NETWORK') {
+      return 'Unable to reach the API server. Check VITE_API_BASE_URL, backend address, and CORS settings.';
+    }
+
     return error.message;
   }
 

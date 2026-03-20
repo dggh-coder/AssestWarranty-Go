@@ -1,4 +1,4 @@
-import api, { unwrapData } from './api';
+import api, { unwrapListData, unwrapRequiredData } from './api';
 import type { AssetFormValues, AssetRecord, AssetSn } from '../types/asset';
 
 function sanitizeSnList(sns: AssetSn[]): AssetSn[] {
@@ -12,12 +12,12 @@ function sanitizeSnList(sns: AssetSn[]): AssetSn[] {
 
 export async function getAssets(): Promise<AssetRecord[]> {
   const response = await api.get('/api/assets');
-  return unwrapData<AssetRecord[]>(response.data);
+  return unwrapListData<AssetRecord>(response.data);
 }
 
 export async function getAsset(id: string): Promise<AssetRecord> {
   const response = await api.get(`/api/assets/${id}`);
-  return unwrapData<AssetRecord>(response.data);
+  return unwrapRequiredData<AssetRecord>(response.data, 'asset detail');
 }
 
 export async function createAsset(payload: AssetFormValues): Promise<AssetRecord> {
@@ -25,7 +25,7 @@ export async function createAsset(payload: AssetFormValues): Promise<AssetRecord
     ...payload,
     sns: sanitizeSnList(payload.sns),
   });
-  return unwrapData<AssetRecord>(response.data);
+  return unwrapRequiredData<AssetRecord>(response.data, 'created asset');
 }
 
 export async function updateAsset(id: string, payload: AssetFormValues): Promise<AssetRecord> {
@@ -33,7 +33,7 @@ export async function updateAsset(id: string, payload: AssetFormValues): Promise
     ...payload,
     sns: sanitizeSnList(payload.sns),
   });
-  return unwrapData<AssetRecord>(response.data);
+  return unwrapRequiredData<AssetRecord>(response.data, 'updated asset');
 }
 
 export async function deleteAsset(id: number): Promise<void> {

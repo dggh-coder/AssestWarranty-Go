@@ -24,3 +24,6 @@ go test ./...
 
 ### `/api/me` 測試帳號設定
 backend 目前提供 `GET /api/me`，預設回傳 `local-admin` / `write`，也可用 `APP_AUTH_USERNAME` 與 `APP_AUTH_ROLE` 覆蓋。
+
+### Frontend / Backend 連線
+若前端與後端分別跑在不同 origin（例如 `:5173` 與 `:8080`），backend 會處理 CORS；frontend 可用 `VITE_API_BASE_URL` 指向遠端 API 主機。

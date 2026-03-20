@@ -1,4 +1,4 @@
-import api, { unwrapData } from './api';
+import api, { unwrapRequiredData } from './api';
 import type { UserProfile } from '../types/auth';
 
 const FALLBACK_USER: UserProfile = {
@@ -9,7 +9,7 @@ const FALLBACK_USER: UserProfile = {
 export async function fetchCurrentUser(): Promise<UserProfile> {
   try {
     const response = await api.get('/api/me');
-    const profile = unwrapData<UserProfile>(response.data);
+    const profile = unwrapRequiredData<UserProfile>(response.data, 'current user');
     return {
       username: profile.username,
       role: profile.role,
