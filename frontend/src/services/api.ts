@@ -1,12 +1,26 @@
 import axios from 'axios';
 import type { ApiEnvelope } from '../types/api';
 
+function getConfiguredApiBaseUrl(): string | undefined {
+  const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+  if (configuredBaseUrl) {
+    return configuredBaseUrl;
+  }
+
+  const legacyConfiguredBaseUri = import.meta.env.VITE_API_BASE_URI?.trim();
+  if (legacyConfiguredBaseUri) {
+    return legacyConfiguredBaseUri;
+  }
+
+  return undefined;
+}
+
 function resolveApiBaseUrl(): string {
   if (import.meta.env.DEV) {
     return '';
   }
 
-  const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+  const configuredBaseUrl = getConfiguredApiBaseUrl();
   if (configuredBaseUrl) {
     return configuredBaseUrl;
   }

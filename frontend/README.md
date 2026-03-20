@@ -28,6 +28,8 @@ npm run dev
 VITE_API_BASE_URL=http://127.0.0.1:8080
 ```
 
+也支援舊名稱 `VITE_API_BASE_URI`，但建議統一改用 `VITE_API_BASE_URL`。修改 `.env` 後請重新啟動 `npm run dev`。
+
 ### Ubuntu / LAN 開發建議
 
 前端在 `npm run dev` 開發模式下，現在會透過 **Vite dev proxy** 轉送 `/api` 請求，因此瀏覽器不會直接連到 `:8080`。
