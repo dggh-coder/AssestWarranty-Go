@@ -1,20 +1,26 @@
 import api, { unwrapRequiredData } from './api';
-import type { UserProfile } from '../types/auth';
+import type { AuthState, UserProfile } from '../types/auth';
 
 const FALLBACK_USER: UserProfile = {
   username: 'local-admin',
   role: 'write',
 };
 
-export async function fetchCurrentUser(): Promise<UserProfile> {
+export async function fetchCurrentUser(): Promise<AuthState> {
   try {
     const response = await api.get('/api/me');
     const profile = unwrapRequiredData<UserProfile>(response.data, 'current user');
     return {
-      username: profile.username,
-      role: profile.role,
+      user: {
+        username: profile.username,
+        role: profile.role,
+      },
+      isFallback: false,
     };
   } catch {
-    return FALLBACK_USER;
+    return {
+      user: FALLBACK_USER,
+      isFallback: true,
+    };
   }
 }

@@ -19,7 +19,7 @@ export default function AppLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isLoading, isFetching, canWrite } = useAuth();
+  const { user, isLoading, isFetching, canWrite, isFallback } = useAuth();
 
   const selectedKeys = useMemo(() => {
     if (location.pathname.startsWith('/assets')) return ['/assets'];
@@ -79,7 +79,7 @@ export default function AppLayout() {
               description="Authenticated role is read-only. Create, edit, delete, and renewal submission actions are disabled."
             />
           ) : null}
-          {!isLoading && !isFetching && user?.username === 'local-admin' ? (
+          {!isLoading && !isFetching && isFallback ? (
             <Alert
               type="info"
               showIcon
