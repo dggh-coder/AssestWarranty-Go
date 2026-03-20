@@ -25,16 +25,33 @@ npm run dev
 複製 `.env.example` 為 `.env`：
 
 ```env
-VITE_API_BASE_URL=http://192.168.8.130:8080
+VITE_API_BASE_URL=http://127.0.0.1:8080
 ```
 
-如果前端是從其他電腦的瀏覽器開啟，請把 `VITE_API_BASE_URL` 設成後端主機可被該瀏覽器存取的位址，例如：
+### Ubuntu / LAN 開發建議
+
+前端在 `npm run dev` 開發模式下，現在會透過 **Vite dev proxy** 轉送 `/api` 請求，因此瀏覽器不會直接連到 `:8080`。
+
+也就是說：
+
+- 瀏覽器開的是 `http://192.168.8.130:5173`
+- Vite server 再把 `/api/*` 代理到 `VITE_API_BASE_URL`
+
+所以在 Ubuntu 主機上開發時，`frontend/.env` 通常可直接設成：
+
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8080
+```
+
+即使你是從別台電腦用瀏覽器開 `http://192.168.8.130:5173`，這樣也可以正常工作，因為代理發生在 Ubuntu 上的 Vite server，不是在瀏覽器端。
+
+如果 backend 不在同一台主機，再把 `VITE_API_BASE_URL` 改成實際 backend 位址，例如：
 
 ```env
 VITE_API_BASE_URL=http://192.168.8.130:8080
 ```
 
-若未設定，前端現在會自動改用「目前瀏覽器所在主機名稱 + `:8080`」作為預設 API 位址。
+production build 若未設定 `VITE_API_BASE_URL`，前端才會自動改用「目前瀏覽器所在主機名稱 + `:8080`」作為預設 API 位址。
 
 另外，backend 現在預設允許跨來源請求（CORS），也可在 `backend/.env` 用 `APP_ALLOWED_ORIGINS` 限制允許的前端來源。
 

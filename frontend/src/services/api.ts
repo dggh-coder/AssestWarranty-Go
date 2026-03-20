@@ -2,6 +2,10 @@ import axios from 'axios';
 import type { ApiEnvelope } from '../types/api';
 
 function resolveApiBaseUrl(): string {
+  if (import.meta.env.DEV) {
+    return '';
+  }
+
   const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
   if (configuredBaseUrl) {
     return configuredBaseUrl;
