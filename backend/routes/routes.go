@@ -19,6 +19,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	assetHandler := handlers.NewAssetHandler(db)
 	renewalHandler := handlers.NewRenewalHandler(db)
+	authHandler := handlers.NewAuthHandler()
 	categoryHandler := handlers.NewMasterDataHandler[models.Category](db)
 	locationHandler := handlers.NewMasterDataHandler[models.Location](db)
 	supplierHandler := handlers.NewMasterDataHandler[models.Supplier](db)
@@ -26,6 +27,8 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	api := router.Group("/api")
 	{
+		api.GET("/me", authHandler.GetCurrentUser)
+
 		assets := api.Group("/assets")
 		{
 			assets.POST("", assetHandler.CreateAsset)

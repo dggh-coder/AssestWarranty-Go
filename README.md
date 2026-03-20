@@ -21,3 +21,6 @@ go test ./...
 
 ### frontend 規劃
 目前 `frontend/` 先保留為前端專案入口位置，可於之後放入 React / Vue / Next.js 專案。
+
+### `/api/me` 測試帳號設定
+backend 目前提供 `GET /api/me`，預設回傳 `local-admin` / `write`，也可用 `APP_AUTH_USERNAME` 與 `APP_AUTH_ROLE` 覆蓋。

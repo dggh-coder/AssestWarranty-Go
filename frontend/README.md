@@ -35,4 +35,20 @@ VITE_API_BASE_URL=http://localhost:8080
 - Asset Detail
 - Renewal Phase 1 / Phase 2
 - Master Data CRUD Pages
-- `/api/me` 身分資訊載入（若後端尚未提供，會暫時以 local-admin write fallback 顯示，方便先測功能）
+- `/api/me` 身分資訊載入（後端現已提供；若 API 暫時不可用，前端仍會暫時以 local-admin write fallback 顯示，方便先測功能）
+
+## `/api/me` 後端設定
+
+backend 預設會回傳：
+
+- `username: local-admin`
+- `role: write`
+
+可透過環境變數覆蓋：
+
+```env
+APP_AUTH_USERNAME=qa-user
+APP_AUTH_ROLE=read
+```
+
+`APP_AUTH_ROLE` 只接受 `read` 或 `write`。
