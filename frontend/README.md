@@ -1,25 +1,38 @@
-# Frontend Workspace
+# Frontend Application
 
-此資料夾預留給前端專案使用，目的是把前端與目前的 Go backend 放在同一個 repository 中管理。
+這個資料夾現在已包含一個可執行的 React + Vite + TypeScript 前端專案，對接同 repository 內 `backend/` 的 Go REST API。
 
-## 建議用途
+## 技術棧
 
-可在此放入：
+- React 18
+- Vite
+- TypeScript
+- Ant Design
+- TanStack React Query
+- Axios
+- React Router
 
-- React + Vite
-- Vue + Vite
-- Next.js
+## 啟動方式
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 ## 建議環境變數
 
-前端可使用類似下列 API base URL 設定：
+複製 `.env.example` 為 `.env`：
 
 ```env
 VITE_API_BASE_URL=http://localhost:8080
 ```
 
-## 目前狀態
+## 目前功能
 
-- backend 已在 `../backend`
-- frontend 尚未初始化框架
-- 後續可直接在此建立前端專案
+- Asset List / Search / Sort / Renewal Selection
+- Create / Edit Asset Form
+- Asset Detail
+- Renewal Phase 1 / Phase 2
+- Master Data CRUD Pages
+- `/api/me` 身分資訊載入（若後端尚未提供，會以 guest read-only fallback 顯示）
