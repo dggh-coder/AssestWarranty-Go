@@ -14,6 +14,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const { Header, Sider, Content } = Layout;
+const ASSET_MENU_GROUP_KEY = 'asset-management';
 
 export default function AppLayout() {
   const [collapsed, setCollapsed] = useState(false);
@@ -41,13 +42,21 @@ export default function AppLayout() {
           theme="dark"
           mode="inline"
           selectedKeys={selectedKeys}
+          defaultOpenKeys={[ASSET_MENU_GROUP_KEY]}
           items={[
-            { key: '/assets', icon: <AppstoreOutlined />, label: <Link to="/assets">Assets</Link> },
-            { key: '/renewals/create', icon: <ReloadOutlined />, label: <Link to="/renewals/create">Renewals</Link> },
-            { key: '/masters/categories', icon: <TagsOutlined />, label: <Link to="/masters/categories">Categories</Link> },
-            { key: '/masters/locations', icon: <DatabaseOutlined />, label: <Link to="/masters/locations">Locations</Link> },
-            { key: '/masters/suppliers', icon: <FormOutlined />, label: <Link to="/masters/suppliers">Suppliers</Link> },
-            { key: '/masters/units', icon: <PlusOutlined />, label: <Link to="/masters/units">Units</Link> },
+            {
+              key: ASSET_MENU_GROUP_KEY,
+              icon: <AppstoreOutlined />,
+              label: 'Assets',
+              children: [
+                { key: '/assets', label: <Link to="/assets">Asset List</Link> },
+                { key: '/renewals/create', icon: <ReloadOutlined />, label: <Link to="/renewals/create">Renewals</Link> },
+                { key: '/masters/categories', icon: <TagsOutlined />, label: <Link to="/masters/categories">Categories</Link> },
+                { key: '/masters/locations', icon: <DatabaseOutlined />, label: <Link to="/masters/locations">Locations</Link> },
+                { key: '/masters/suppliers', icon: <FormOutlined />, label: <Link to="/masters/suppliers">Suppliers</Link> },
+                { key: '/masters/units', icon: <PlusOutlined />, label: <Link to="/masters/units">Units</Link> },
+              ],
+            },
           ]}
         />
       </Sider>

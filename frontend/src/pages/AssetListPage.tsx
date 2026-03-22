@@ -14,6 +14,15 @@ import { getErrorMessage } from '../utils/error';
 
 const { Search } = Input;
 
+function formatCurrency(value?: number) {
+  if (value === undefined || value === null) return '-';
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+}
+
+function formatBoolean(value: boolean) {
+  return value ? 'Yes' : 'No';
+}
+
 export default function AssetListPage() {
   const navigate = useNavigate();
   const { message, modal } = AntdApp.useApp();
@@ -27,9 +36,21 @@ export default function AssetListPage() {
 
   const filteredAssets = useMemo(() => {
     return assets.filter((asset) => {
-      const matchesSearch = [asset.item_number, asset.name]
+      const matchesSearch = [
+        asset.item_number,
+        asset.name,
+        asset.description,
+        asset.usage,
+        asset.commission_ip,
+        asset.recent_ip,
+        asset.category?.name,
+        asset.location?.name,
+        asset.supplier?.name,
+        asset.unit?.name,
+        ...(asset.sns?.map((sn) => sn.sn_value) ?? []),
+      ]
         .filter(Boolean)
-        .some((value) => value.toLowerCase().includes(search.toLowerCase()));
+        .some((value) => value!.toLowerCase().includes(search.toLowerCase()));
 
       const matchesFilter = filterMode === 'all' || isExpiringSoon(asset.next_billing_date, asset.remind_before_days);
       return matchesSearch && matchesFilter;
@@ -59,8 +80,17 @@ export default function AssetListPage() {
 
   const columns: ColumnsType<AssetRecord> = [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      width: 80,
+      sorter: (a, b) => a.id - b.id,
+      fixed: 'left',
+    },
+    {
       title: 'Item Number',
       dataIndex: 'item_number',
+      width: 160,
+      fixed: 'left',
       sorter: (a, b) => a.item_number.localeCompare(b.item_number),
       render: (_, record) => (
         <Button type="link" onClick={() => navigate(`/assets/${record.id}`)} style={{ padding: 0 }}>
@@ -71,27 +101,61 @@ export default function AssetListPage() {
     {
       title: 'Name',
       dataIndex: 'name',
+      width: 180,
       sorter: (a, b) => (a.name ?? '').localeCompare(b.name ?? ''),
       render: (_, record) => record.name || '-',
     },
     {
+      title: 'Quantity',
+      dataIndex: 'quantity',
+      width: 100,
+      sorter: (a, b) => a.quantity - b.quantity,
+    },
+    {
+      title: 'Unit',
+      width: 140,
+      render: (_, record) => record.unit?.name ?? '-',
+      sorter: (a, b) => (a.unit?.name ?? '').localeCompare(b.unit?.name ?? ''),
+    },
+    {
       title: 'Category',
+      width: 160,
       render: (_, record) => record.category?.name ?? '-',
       sorter: (a, b) => (a.category?.name ?? '').localeCompare(b.category?.name ?? ''),
     },
     {
       title: 'Location',
+      width: 160,
       render: (_, record) => record.location?.name ?? '-',
       sorter: (a, b) => (a.location?.name ?? '').localeCompare(b.location?.name ?? ''),
     },
     {
       title: 'Supplier',
+      width: 160,
       render: (_, record) => record.supplier?.name ?? '-',
       sorter: (a, b) => (a.supplier?.name ?? '').localeCompare(b.supplier?.name ?? ''),
     },
     {
+      title: 'Usage',
+      dataIndex: 'usage',
+      width: 180,
+      render: (value) => value || '-',
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      width: 220,
+      render: (value) => value || '-',
+    },
+    {
+      title: 'SNs',
+      width: 220,
+      render: (_, record) => record.sns?.map((sn) => sn.sn_value).join(', ') || '-',
+    },
+    {
       title: 'Next Billing Date',
       dataIndex: 'next_billing_date',
+      width: 170,
       sorter: (a, b) => a.next_billing_date.localeCompare(b.next_billing_date),
       render: (value, record) => (
         <Space>
@@ -101,13 +165,83 @@ export default function AssetListPage() {
       ),
     },
     {
+      title: 'Remind Before (Days)',
+      dataIndex: 'remind_before_days',
+      width: 160,
+      sorter: (a, b) => a.remind_before_days - b.remind_before_days,
+    },
+    {
+      title: 'Expiry Date',
+      dataIndex: 'expiry_date',
+      width: 140,
+      render: (value) => (value ? formatDate(value) : '-'),
+      sorter: (a, b) => (a.expiry_date ?? '').localeCompare(b.expiry_date ?? ''),
+    },
+    {
+      title: 'Yearly Cost',
+      dataIndex: 'yearly_cost',
+      width: 140,
+      render: (value) => formatCurrency(value),
+      sorter: (a, b) => (a.yearly_cost ?? 0) - (b.yearly_cost ?? 0),
+    },
+    {
+      title: 'Price',
+      dataIndex: 'price',
+      width: 140,
+      render: (value) => formatCurrency(value),
+      sorter: (a, b) => (a.price ?? 0) - (b.price ?? 0),
+    },
+    {
+      title: 'In Use',
+      dataIndex: 'in_use',
+      width: 110,
+      render: (value) => formatBoolean(value),
+      sorter: (a, b) => Number(a.in_use) - Number(b.in_use),
+    },
+    {
+      title: 'Commission Date',
+      dataIndex: 'commission_date',
+      width: 170,
+      render: (value) => (value ? formatDate(value) : '-'),
+      sorter: (a, b) => (a.commission_date ?? '').localeCompare(b.commission_date ?? ''),
+    },
+    {
+      title: 'Commission IP',
+      dataIndex: 'commission_ip',
+      width: 150,
+      render: (value) => value || '-',
+    },
+    {
+      title: 'Recent IP',
+      dataIndex: 'recent_ip',
+      width: 150,
+      render: (value) => value || '-',
+    },
+    {
       title: 'Status',
       dataIndex: 'status',
+      width: 130,
       render: (status) => <AssetStatusTag status={status} />,
+    },
+    {
+      title: 'Created At',
+      dataIndex: 'created_at',
+      width: 170,
+      render: (value) => (value ? formatDate(value) : '-'),
+      sorter: (a, b) => (a.created_at ?? '').localeCompare(b.created_at ?? ''),
+    },
+    {
+      title: 'Updated At',
+      dataIndex: 'updated_at',
+      width: 170,
+      render: (value) => (value ? formatDate(value) : '-'),
+      sorter: (a, b) => (a.updated_at ?? '').localeCompare(b.updated_at ?? ''),
     },
     {
       title: 'Actions',
       key: 'actions',
+      width: 180,
+      fixed: 'right',
       render: (_, record) => (
         <Space>
           <Tooltip title="View detail">
@@ -155,7 +289,7 @@ export default function AssetListPage() {
           <Space wrap style={{ width: '100%', justifyContent: 'space-between' }}>
             <Search
               allowClear
-              placeholder="Search by item number or name"
+              placeholder="Search by asset information"
               onSearch={setSearch}
               onChange={(event) => setSearch(event.target.value)}
               style={{ maxWidth: 320 }}
@@ -188,7 +322,8 @@ export default function AssetListPage() {
               if (isExpiringSoon(record.next_billing_date, record.remind_before_days)) return 'asset-row-expiring';
               return '';
             }}
-            scroll={{ x: 1200 }}
+            scroll={{ x: 'max-content', y: 600 }}
+            sticky
           />
           <Typography.Text type="secondary">
             Selected assets for renewal: {selectedRowKeys.length}
